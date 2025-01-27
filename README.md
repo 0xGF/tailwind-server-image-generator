@@ -27,7 +27,7 @@ The package includes a built-in web interface for testing and generating images.
 - Download functionality
 - Sample templates
 
-![Web Interface Screenshot](https://raw.githubusercontent.com/0xGF/tailwind-server-image-generator/main/screenshots/ui.png)
+![Web Interface Screenshot](https://raw.githubusercontent.com/0xGF/tailwind-server-image-generator/screenshots/ui.png)
 
 > Note: Remember to replace the screenshot URL with your actual repository URL after uploading the screenshot.
 
