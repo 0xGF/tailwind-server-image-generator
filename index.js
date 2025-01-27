@@ -8,56 +8,85 @@ const app = express();
 async function generateImage(htmlContent, outputPath, options = {}) {
   const { width = 800, height = 600, format = "png" } = options;
 
-  // Launch a new browser instance
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
+  // Validate format
+  const validFormats = ["png", "jpeg", "webp"];
+  const imageFormat = format.toLowerCase();
+  if (!validFormats.includes(imageFormat)) {
+    throw new Error(
+      `Invalid format. Must be one of: ${validFormats.join(", ")}`
+    );
+  }
 
-  // Set the viewport size to the desired image dimensions
-  await page.setViewport({ width: parseInt(width), height: parseInt(height) });
+  // Ensure output directory exists
+  const outputDir = path.dirname(outputPath);
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
 
-  // Create a temporary HTML file with the provided HTML content
-  const tempFilePath = path.join(__dirname, "temp.html");
-  fs.writeFileSync(
-    tempFilePath,
-    `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <script src="https://cdn.tailwindcss.com"></script>
-        </head>
-        <body>
-          ${htmlContent}
-        </body>
-      </html>
-    `
-  );
+  let browser;
+  try {
+    // Launch a new browser instance
+    browser = await puppeteer.launch();
+    const page = await browser.newPage();
 
-  // Load the temporary HTML file in the browser
-  await page.goto(`file://${tempFilePath}`, { waitUntil: "networkidle0" });
-
-  // Wait for the Tailwind CSS styles to be applied
-  await page.evaluate(() => {
-    return new Promise((resolve) => {
-      const checkStyles = () => {
-        const element = document.querySelector("*");
-        if (window.getComputedStyle(element).display !== "none") {
-          resolve();
-        } else {
-          setTimeout(checkStyles, 100);
-        }
-      };
-      checkStyles();
+    // Set the viewport size to the desired image dimensions
+    await page.setViewport({
+      width: parseInt(width),
+      height: parseInt(height),
     });
-  });
 
-  // Capture a screenshot of the rendered page
-  await page.screenshot({ path: outputPath, fullPage: true });
+    // Create a temporary HTML file with the provided HTML content
+    const tempFilePath = path.join(__dirname, "temp.html");
+    fs.writeFileSync(
+      tempFilePath,
+      `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <script src="https://cdn.tailwindcss.com"></script>
+          </head>
+          <body>
+            ${htmlContent}
+          </body>
+        </html>
+      `
+    );
 
-  // Close the browser instance
-  await browser.close();
+    // Load the temporary HTML file in the browser
+    await page.goto(`file://${tempFilePath}`, { waitUntil: "networkidle0" });
 
-  // Delete the temporary HTML file
-  fs.unlinkSync(tempFilePath);
+    // Wait for the Tailwind CSS styles to be applied
+    await page.evaluate(() => {
+      return new Promise((resolve) => {
+        const checkStyles = () => {
+          const element = document.querySelector("*");
+          if (window.getComputedStyle(element).display !== "none") {
+            resolve();
+          } else {
+            setTimeout(checkStyles, 100);
+          }
+        };
+        checkStyles();
+      });
+    });
+
+    // Capture a screenshot of the rendered page
+    await page.screenshot({
+      path: outputPath,
+      fullPage: true,
+      type: imageFormat,
+    });
+
+    // Delete the temporary HTML file
+    fs.unlinkSync(tempFilePath);
+  } catch (error) {
+    throw new Error(`Failed to generate image: ${error.message}`);
+  } finally {
+    // Always close the browser instance
+    if (browser) {
+      await browser.close();
+    }
+  }
 }
 
 app.use(express.static(path.join(__dirname, "public")));
@@ -68,6 +97,14 @@ app.get("/", (req, res) => {
 
 app.get("/generate", async (req, res) => {
   const { html, width, height, format } = req.query;
+
+  // Validate format
+  const validFormats = ["png", "jpeg", "webp"];
+  if (format && !validFormats.includes(format.toLowerCase())) {
+    return res
+      .status(400)
+      .send(`Invalid format. Must be one of: ${validFormats.join(", ")}`);
+  }
 
   // Validate width and height
   if (width && (isNaN(width) || width <= 0)) {

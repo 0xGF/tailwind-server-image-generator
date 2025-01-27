@@ -170,6 +170,140 @@ This allows AI systems to:
 - Generate preview images
 - Create custom visualizations
 
+## Advanced Examples
+
+### 1. Social Media Cards
+
+```javascript
+const { generateImage } = require("tailwind-image-generator");
+
+async function generateTwitterCard(title, description) {
+  const html = `
+    <div class="bg-gradient-to-r from-blue-500 to-purple-600 w-full h-full flex items-center justify-center p-12">
+      <div class="bg-white rounded-xl shadow-2xl p-8 max-w-2xl">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">${title}</h1>
+        <p class="text-xl text-gray-600">${description}</p>
+      </div>
+    </div>
+  `;
+
+  await generateImage(html, "twitter-card.png", {
+    width: 1200,
+    height: 630,
+    format: "png",
+  });
+}
+```
+
+### 2. Product Thumbnails
+
+```javascript
+async function generateProductThumbnail(product) {
+  const html = `
+    <div class="bg-gray-50 w-full h-full flex items-center justify-center p-8">
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-bold text-gray-800">${product.name}</h2>
+        <p class="text-3xl font-bold text-green-600 mt-2">${product.price}</p>
+        <div class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded">
+          View Details
+        </div>
+      </div>
+    </div>
+  `;
+
+  await generateImage(html, `products/${product.id}.png`, {
+    width: 800,
+    height: 800,
+    format: "png",
+  });
+}
+```
+
+### 3. Quote Images
+
+```javascript
+async function generateQuoteImage(quote, author) {
+  const html = `
+    <div class="bg-gradient-to-br from-pink-500 to-orange-400 w-full h-full flex items-center justify-center p-16">
+      <div class="text-center">
+        <p class="text-3xl font-serif text-white italic">"${quote}"</p>
+        <p class="text-xl text-white mt-6">- ${author}</p>
+      </div>
+    </div>
+  `;
+
+  await generateImage(html, "quote.png", {
+    width: 1080,
+    height: 1080,
+    format: "png",
+  });
+}
+```
+
+## Common Use Cases
+
+1. **Email Marketing**
+
+   - Generate dynamic header images
+   - Create personalized promotional banners
+   - Design campaign-specific graphics
+
+2. **E-commerce**
+
+   - Automated product image generation
+   - Sale announcement banners
+   - Category thumbnails
+   - Price comparison cards
+
+3. **Content Management**
+
+   - Blog post featured images
+   - Article preview cards
+   - Category headers
+   - Author profile cards
+
+4. **Social Media**
+
+   - Twitter/LinkedIn/Facebook post images
+   - Instagram story templates
+   - YouTube thumbnails
+   - Pinterest pins
+
+5. **Documentation**
+   - API endpoint cards
+   - Feature highlight images
+   - Tutorial step graphics
+   - Component previews
+
+## Best Practices for Production Use
+
+1. **Performance Optimization**
+
+   - Cache frequently generated images
+   - Use appropriate image dimensions
+   - Consider implementing rate limiting
+   - Clean up temporary files regularly
+
+2. **Error Handling**
+
+   - Implement proper logging
+   - Set up monitoring for the service
+   - Handle timeout scenarios
+   - Validate input thoroughly
+
+3. **Security Considerations**
+
+   - Sanitize HTML input
+   - Implement authentication if needed
+   - Set up CORS properly
+   - Monitor resource usage
+
+4. **Scaling Tips**
+   - Use a CDN for high-traffic scenarios
+   - Implement queue systems for bulk processing
+   - Consider containerization
+   - Set up load balancing
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
