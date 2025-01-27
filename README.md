@@ -14,8 +14,22 @@ A powerful Node.js package for generating images server-side using Tailwind CSS.
 ## Installation
 
 ```bash
-npm install tailwind-image-generator
+npm install tailwind-server-image-generator
 ```
+
+## Web Interface
+
+The package includes a built-in web interface for testing and generating images. When you start the server, you can access it at `http://localhost:3000` (or whatever port is assigned). The interface provides:
+
+- Live HTML input with Tailwind CSS
+- Dimension and format controls
+- Instant preview
+- Download functionality
+- Sample templates
+
+![Web Interface Screenshot](https://raw.githubusercontent.com/yourusername/tailwind-server-image-generator/main/screenshots/ui.png)
+
+> Note: Remember to replace the screenshot URL with your actual repository URL after uploading the screenshot.
 
 ## Quick Start
 
