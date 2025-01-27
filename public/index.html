@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Tailwind Image Generator</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 min-h-screen p-8">
+    <div class="max-w-4xl mx-auto">
+      <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">
+          Tailwind Image Generator
+        </h1>
+
+        <form id="generateForm" class="space-y-6">
+          <div>
+            <label
+              for="html"
+              class="block text-sm font-medium text-gray-700 mb-2"
+              >HTML Content:</label
+            >
+            <textarea
+              id="html"
+              name="html"
+              rows="10"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Enter your HTML with Tailwind classes here..."
+            ></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label
+                for="width"
+                class="block text-sm font-medium text-gray-700 mb-2"
+                >Width:</label
+              >
+              <input
+                type="number"
+                id="width"
+                name="width"
+                value="800"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <div>
+              <label
+                for="height"
+                class="block text-sm font-medium text-gray-700 mb-2"
+                >Height:</label
+              >
+              <input
+                type="number"
+                id="height"
+                name="height"
+                value="600"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <div>
+              <label
+                for="format"
+                class="block text-sm font-medium text-gray-700 mb-2"
+                >Format:</label
+              >
+              <select
+                id="format"
+                name="format"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="png">PNG</option>
+                <option value="jpg">JPEG</option>
+                <option value="webp">WebP</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition duration-200 flex items-center justify-center"
+            >
+              <span id="buttonText">Generate Image</span>
+              <svg
+                id="loadingSpinner"
+                class="animate-spin ml-2 h-5 w-5 text-white hidden"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Sample Templates Section -->
+      <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Sample Templates</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button
+            onclick="loadTemplate('simple')"
+            class="p-4 border rounded hover:bg-gray-50"
+          >
+            Simple Card
+          </button>
+          <button
+            onclick="loadTemplate('gradient')"
+            class="p-4 border rounded hover:bg-gray-50"
+          >
+            Gradient Background
+          </button>
+        </div>
+      </div>
+
+      <!-- Preview Section -->
+      <div id="imageContainer" class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Generated Image</h2>
+        <div id="imageWrapper" class="flex justify-center"></div>
+      </div>
+    </div>
+
+    <script>
+      const templates = {
+        simple: `<div class="bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto">
+    <h1 class="text-2xl font-bold text-gray-800 mb-4">Simple Card</h1>
+    <p class="text-gray-600">This is a simple card template with Tailwind CSS.</p>
+    <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Click Me</button>
+</div>`,
+        gradient: `<div class="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 p-8">
+    <div class="bg-white rounded-lg shadow-xl p-6 max-w-md mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">Gradient Background</h1>
+        <p class="text-gray-600">A card with a beautiful gradient background.</p>
+    </div>
+</div>`,
+      };
+
+      function loadTemplate(name) {
+        document.getElementById("html").value = templates[name];
+      }
+
+      document
+        .getElementById("generateForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          // Show loading state
+          const button = e.target.querySelector('button[type="submit"]');
+          const buttonText = document.getElementById("buttonText");
+          const loadingSpinner = document.getElementById("loadingSpinner");
+          button.disabled = true;
+          buttonText.textContent = "Generating...";
+          loadingSpinner.classList.remove("hidden");
+
+          try {
+            const html = document.getElementById("html").value;
+            const width = document.getElementById("width").value;
+            const height = document.getElementById("height").value;
+            const format = document.getElementById("format").value;
+
+            const response = await fetch(
+              `/generate?html=${encodeURIComponent(html)}&width=${width}&height=${height}&format=${format}`
+            );
+
+            if (!response.ok) {
+              throw new Error("Failed to generate image");
+            }
+
+            const imageUrl = URL.createObjectURL(await response.blob());
+            const imageWrapper = document.getElementById("imageWrapper");
+            imageWrapper.innerHTML = `
+                    <div class="space-y-4">
+                        <img src="${imageUrl}" alt="Generated Image" class="max-w-full h-auto shadow-lg rounded">
+                        <a href="${imageUrl}" download="generated-image.${format}" class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                            Download Image
+                        </a>
+                    </div>
+                `;
+          } catch (error) {
+            console.error("Error:", error);
+            alert("Failed to generate image. Please try again.");
+          } finally {
+            // Reset loading state
+            button.disabled = false;
+            buttonText.textContent = "Generate Image";
+            loadingSpinner.classList.add("hidden");
+          }
+        });
+    </script>
+  </body>
+</html>
