@@ -1,5 +1,5 @@
 {
-  "name": "tailwind-image-generator",
+  "name": "tailwind-server-image-generator",
   "version": "1.0.0",
   "description": "Server-side image generation using Tailwind CSS. With testing UI for viewing passed output using html and tailwind classes. You can use this to generate images for social media cards, thumbnails, or any dynamic images that leverage Tailwind's utility classes on the server side. This uses puppeteer for accurate rendering, and sharp for image processing, and express for the UI testing server. Made by 0xGF, with love and to help others experiencing difficulties with outdated inaccurate solutions for server side image generation.",
   "main": "index.js",
