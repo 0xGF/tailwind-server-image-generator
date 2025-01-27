@@ -3,3 +3,4 @@ test/
 node_modules/
 public/generated/
 *.log
+screenshots/
